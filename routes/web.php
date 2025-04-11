@@ -2,8 +2,20 @@
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
-$router->get('/users', 'UserController@getUsers');
-$router->post('/users', 'UserController@add');
-$router->get('/users/{id}', 'UserController@show');
-$router->put('/users/{id}', 'UserController@update');
-$router->delete('/users/{id}', 'UserController@delete');
+// Public route for testing
+$router->get('/', function () use ($router) {
+    return $router->app->version();
+});
+
+// Group of routes that require JWT Authentication
+$router->group(['middleware' => 'jwt.auth'], function () use ($router) {
+    // Route to fetch data from Site 1
+    $router->get('/site1', 'GatewayController@getSite1Data');
+    
+    // Route to fetch data from Site 2
+    $router->get('/site2', 'GatewayController@getSite2Data');
+});
+
+// Public route for non-authenticated users (if you need)
+$router->get('/public', 'GatewayController@getPublicData');
+
